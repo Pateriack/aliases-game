@@ -1,0 +1,3 @@
+export const CHANGE_PLAYER_TEAM = 'CHANGE_PLAYER_TEAM';
+export const SHUFFLE_TEAMS = 'SHUFFLE_TEAMS';
+export const START_GAME = 'START_GAME';

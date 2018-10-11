@@ -1,43 +1,54 @@
 /* eslint-disable import/no-named-as-default */
-import { NavLink, Route, Switch } from "react-router-dom";
 
-import AboutPage from "./AboutPage";
-import FuelSavingsPage from "./containers/FuelSavingsPage";
-import HomePage from "./HomePage";
-import NotFoundPage from "./NotFoundPage";
 import PropTypes from "prop-types";
 import React from "react";
 import { hot } from "react-hot-loader";
+import {connect} from 'react-redux';
 
-// This is a class-based component because the current
-// version of hot reloading won't hot reload a stateless
-// component at the top-level.
+import * as AppState from '../constants/AppState';
+import HomeLayout from './home/HomeLayout';
+import HostLayout from './host/HostLayout';
+import PlayerLayout from './player/PlayerLayout';
+
+const getAppLayout = (appState) => {
+  switch(appState) {
+    case AppState.HOST:
+      return <HostLayout/>
+    case AppState.PLAYER:
+      return <PlayerLayout/>
+    case AppState.HOME:
+    default:
+      return <HomeLayout/>
+  }
+};
 
 class App extends React.Component {
   render() {
-    const activeStyle = { color: 'blue' };
+    const {appState} = this.props;
+
+    const layout = getAppLayout(appState);
+
     return (
       <div>
-        <div>
-          <NavLink exact to="/" activeStyle={activeStyle}>Home</NavLink>
-          {' | '}
-          <NavLink to="/fuel-savings" activeStyle={activeStyle}>Demo App</NavLink>
-          {' | '}
-          <NavLink to="/about" activeStyle={activeStyle}>About</NavLink>
-        </div>
-        <Switch>
-          <Route exact path="/" component={HomePage} />
-          <Route path="/fuel-savings" component={FuelSavingsPage} />
-          <Route path="/about" component={AboutPage} />
-          <Route component={NotFoundPage} />
-        </Switch>
+        {layout}
       </div>
     );
   }
 }
 
 App.propTypes = {
-  children: PropTypes.element
+  appState: PropTypes.oneOf([
+    AppState.HOME,
+    AppState.HOST,
+    AppState.PLAYER
+  ])
 };
 
-export default hot(module)(App);
+const mapStateToProps = (state) => {
+  const {appState} = state;
+  return {appState};
+}
+
+export default hot(module)(
+  connect(mapStateToProps)(App)
+);
